@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jurassic Zero - Ficha de Personaje Interactiva</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Orbitron & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      color: #1e293b;
+    }
+    .font-dino {
+      font-family: 'Orbitron', sans-serif;
+    }
+    
+    /* Simulación de Hoja de Papel A4 */
+    .sheet-paper {
+      background-color: #fcfbf7;
+      background-image: radial-gradient(#e5e7eb 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 10mm 12mm;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* Estilos personalizados para los inputs */
+    input[type="text"], input[type="number"] {
+      background: transparent;
+      border: none;
+      border-bottom: 1.5px solid #64748b;
+      outline: none;
+      font-family: inherit;
+      font-weight: 600;
+      color: #0f172a;
+      padding: 1px 4px;
+      transition: all 0.2s ease;
+    }
+    input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
+      border-bottom-color: #dc2626;
+      background-color: rgba(254, 242, 242, 0.5);
+    }
+    
+    textarea {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1.5px solid #94a3b8;
+      border-radius: 6px;
+      padding: 6px 8px;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: #0f172a;
+      resize: none;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    textarea:focus {
+      border-color: #dc2626;
+      background-color: #ffffff;
+    }
+
+    /* Checkbox personalizado estilo jurásico */
+    input[type="checkbox"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #334155;
+      border-radius: 3px;
+      background-color: #ffffff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      transition: all 0.15s ease;
+    }
+    input[type="checkbox"]:checked {
+      background-color: #dc2626;
+      border-color: #dc2626;
+    }
+    input[type="checkbox"]:checked::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      color: #ffffff;
+      font-size: 10px;
+    }
+
+    .section-title {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      padding: 3px 8px;
+      border-left: 4px solid #dc2626;
+      border-radius: 2px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Reglas específicas para exportación en PDF e Impresión */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 0;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      .sheet-paper {
+        box-shadow: none !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        margin: 0 auto !important;
+        padding: 8mm 10mm !important;
+        background-color: #ffffff !important;
+        background-image: none !important;
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+      input[type="text"], input[type="number"] {
+        border-bottom-color: #000000 !important;
+      }
+      textarea {
+        border-color: #64748b !important;
+        background: transparent !important;
+      }
+      .section-title {
+        background: #0f172a !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body class="py-6 px-2 min-h-screen">
+
+  <!-- BARRA DE HERRAMIENTAS (No imprimible) -->
+  <header class="no-print max-w-[210mm] mx-auto mb-4 bg-slate-800 text-white p-4 rounded-xl shadow-lg flex flex-wrap items-center justify-between gap-4 border border-slate-700">
+    <div class="flex items-center gap-3">
+      <div class="bg-red-600 p-2 rounded-lg text-white">
+        <i class="fa-solid fa-dragon text-2xl"></i>
+      </div>
+      <div>
+        <h1 class="font-dino text-lg text-red-500 font-bold tracking-wide">JURASSIC ZERO</h1>
+        <p class="text-xs text-slate-400">Editor Interactivo de Ficha de Personaje</p>
+      </div>
+    </div>
+
+    <!-- Acciones principales -->
+    <div class="flex items-center flex-wrap gap-2">
+      <button id="btn-export-pdf" onclick="window.print()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition flex items-center gap-2 text-sm">
+        <i class="fa-solid fa-file-pdf"></i> Exportar / Imprimir PDF
+      </button>
+      <button id="btn-demo-data" onclick="loadDemoData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center gap-1.5">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> Ejemplo
+      </button>
+      <button id="btn-reset" onclick="resetForm()" class="bg-slate-700 hover:bg-red-900/50 text-slate-300 hover:text-red-200 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center gap-1.5">
+        <i class="fa-solid fa-rotate-right"></i> Limpiar
+      </button>
+    </div>
+  </header>
+
+  <!-- NOTIFICACIÓN DE AUTO-GUARDADO (No imprimible) -->
+  <div id="save-indicator" class="no-print max-w-[210mm] mx-auto mb-2 text-right text-xs text-slate-400 opacity-0 transition-opacity duration-300 flex items-center justify-end gap-1.5">
+    <i class="fa-solid fa-floppy-disk text-emerald-400"></i> Cambios guardados automáticamente en tu navegador
+  </div>
+
+  <!-- FICHA IMPRIMIBLE (Formato A4) -->
+  <main class="sheet-paper flex flex-col justify-between text-slate-800 text-xs">
+    
+    <div>
+      <!-- CABECERA DE FICHA CON DINOSAURIOS Y TITULO -->
+      <div class="flex items-center justify-between border-b-4 border-slate-900 pb-2 mb-3">
+        <!-- Raptor Silhouette SVG -->
+        <div class="w-16 h-12 flex items-center justify-center text-slate-900 opacity-90">
+          <svg viewBox="0 0 100 80" class="w-full h-full fill-current">
+            <path d="M90,30 C85,25 75,20 65,22 C55,24 45,15 35,12 C25,9 15,15 10,25 C5,35 12,45 20,50 C28,55 35,65 40,75 L45,75 C42,65 40,55 48,50 C55,45 65,48 75,45 C85,42 95,35 90,30 Z M25,25 C23,25 21,23 21,21 C21,19 23,17 25,17 C27,17 29,19 29,21 C29,23 27,25 25,25 Z"/>
+          </svg>
+        </div>
+
+        <div class="text-center">
+          <span class="text-red-600 font-bold tracking-[0.3em] uppercase text-[10px] block">Ficha de Personaje</span>
+          <h1 class="font-dino text-2xl font-black text-slate-900 tracking-wider">JURASSIC ZERO</h1>
+        </div>
+
+        <!-- Triceratops Silhouette SVG -->
+        <div class="w-16 h-12 flex items-center justify-center text-slate-900 opacity-90">
+          <svg viewBox="0 0 100 80" class="w-full h-full fill-current">
+            <path d="M10,40 C15,30 25,20 40,22 C35,15 25,10 15,12 L12,18 C18,22 25,30 20,40 Z M45,25 C55,15 70,12 85,15 C90,25 85,40 75,50 C65,60 55,70 45,75 L40,75 C45,65 40,50 35,45 C30,40 20,45 10,40 C20,35 35,35 45,25 Z M75,25 C77,25 79,23 79,21 C79,19 77,17 75,17 C73,17 71,19 71,21 C71,23 73,25 75,25 Z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DATOS DE IDENTIFICACIÓN -->
+      <div class="grid grid-cols-12 gap-x-3 gap-y-2 mb-3">
+        <div class="col-span-6 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Nombre:</label>
+          <input type="text" id="nombre" class="w-full">
+        </div>
+        <div class="col-span-2 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Nivel:</label>
+          <input type="text" id="nivel" class="w-full text-center">
+        </div>
+        <div class="col-span-4 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">EXP:</label>
+          <input type="text" id="exp" class="w-full">
+        </div>
+
+        <div class="col-span-6 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Profesión:</label>
+          <input type="text" id="profesion" class="w-full">
+        </div>
+        <div class="col-span-6 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Afiliación:</label>
+          <input type="text" id="afiliacion" class="w-full">
+        </div>
+
+        <div class="col-span-6 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Virtudes:</label>
+          <input type="text" id="virtudes" class="w-full">
+        </div>
+        <div class="col-span-6 flex items-end gap-1.5">
+          <label class="font-bold text-slate-900 text-[10px] uppercase shrink-0">Defectos:</label>
+          <input type="text" id="defectos" class="w-full">
+        </div>
+      </div>
+
+      <!-- SECCIÓN DE ATRIBUTOS Y ATRIBUTOS SECUNDARIOS -->
+      <div class="grid grid-cols-12 gap-3 mb-3">
+        
+        <!-- ATRIBUTOS PRINCIPALES -->
+        <div class="col-span-6 flex flex-col justify-between">
+          <div class="section-title">
+            <span>Atributos</span>
+            <i class="fa-solid fa-dna text-red-400 text-xs"></i>
+          </div>
+
+          <!-- SUERTE CON CHECKBOXES -->
+          <div class="flex items-center justify-between bg-slate-100 p-1.5 rounded border border-slate-300 my-1">
+            <span class="font-bold text-slate-900 text-[10px] uppercase flex items-center gap-1">
+              <i class="fa-solid fa-dice-d6 text-red-600"></i> Suerte:
+            </span>
+            <div class="flex items-center gap-1.5">
+              <input type="checkbox" id="suerte_1">
+              <input type="checkbox" id="suerte_2">
+              <input type="checkbox" id="suerte_3">
+              <input type="checkbox" id="suerte_4">
+              <input type="checkbox" id="suerte_5">
+              <input type="text" id="suerte_val" class="w-7 text-center font-bold text-xs ml-1" placeholder="Val">
+            </div>
+          </div>
+
+          <!-- TABLA DE ATRIBUTOS -->
+          <table class="w-full border-collapse text-xs">
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_fuerza"></td>
+                <td class="font-bold text-slate-800 py-1">FUERZA:</td>
+                <td class="w-16 py-1"><input type="text" id="fuerza" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_destreza"></td>
+                <td class="font-bold text-slate-800 py-1">DESTREZA:</td>
+                <td class="w-16 py-1"><input type="text" id="destreza" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_inteligencia"></td>
+                <td class="font-bold text-slate-800 py-1">INTELEGENCIA / INTELECTO:</td>
+                <td class="w-16 py-1"><input type="text" id="inteligencia" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_personalidad"></td>
+                <td class="font-bold text-slate-800 py-1">PERSONALIDAD:</td>
+                <td class="w-16 py-1"><input type="text" id="personalidad" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_resistencia"></td>
+                <td class="font-bold text-slate-800 py-1">RESISTENCIA:</td>
+                <td class="w-16 py-1"><input type="text" id="resistencia" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr>
+                <td class="w-6 py-1 text-center"><input type="checkbox" id="chk_sentidos"></td>
+                <td class="font-bold text-slate-800 py-1">SENTIDOS:</td>
+                <td class="w-16 py-1"><input type="text" id="sentidos" class="w-full text-center font-bold"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ATRIBUTOS SECUNDARIOS -->
+        <div class="col-span-6 flex flex-col justify-between">
+          <div class="section-title">
+            <span>Atributos Secundarios</span>
+            <i class="fa-solid fa-shield-halved text-red-400 text-xs"></i>
+          </div>
+
+          <table class="w-full border-collapse text-xs mt-1">
+            <tbody>
+              <tr class="border-b border-slate-200">
+                <td class="font-bold text-slate-800 py-1.5">VELOCIDAD:</td>
+                <td class="w-20 py-1.5"><input type="text" id="velocidad" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="font-bold text-slate-800 py-1.5">DEFENSA:</td>
+                <td class="w-20 py-1.5"><input type="text" id="defensa" class="w-full text-center font-bold"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="font-bold text-slate-800 py-1.5">
+                  VIT <span class="text-[9px] text-slate-500 font-normal">(Actual / Máx)</span>:
+                </td>
+                <td class="w-24 py-1.5">
+                  <div class="flex items-center gap-1">
+                    <input type="text" id="vit_actual" placeholder="Act" class="w-1/2 text-center font-bold text-red-600">
+                    <span class="text-slate-400">/</span>
+                    <input type="text" id="vit_max" placeholder="Máx" class="w-1/2 text-center">
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="font-bold text-slate-800 py-1.5">HERIDAS:</td>
+                <td class="w-20 py-1.5"><input type="text" id="heridas" class="w-full text-center"></td>
+              </tr>
+              <tr class="border-b border-slate-200">
+                <td class="font-bold text-slate-800 py-1.5">
+                  PE <span class="text-[9px] text-slate-500 font-normal">(Energía)</span>:
+                </td>
+                <td class="w-24 py-1.5">
+                  <div class="flex items-center gap-1">
+                    <input type="text" id="pe_actual" placeholder="Act" class="w-1/2 text-center font-bold text-blue-600">
+                    <span class="text-slate-400">/</span>
+                    <input type="text" id="pe_max" placeholder="Máx" class="w-1/2 text-center">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="font-bold text-slate-800 py-1.5">COMPETENCIA:</td>
+                <td class="w-20 py-1.5"><input type="text" id="competencia" class="w-full text-center"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- CAPACIDADES HEROICAS Y MANIOBRAS -->
+      <div class="grid grid-cols-12 gap-3 mb-3">
+        <!-- CAPACIDADES HEROICAS -->
+        <div class="col-span-6">
+          <div class="section-title mb-1.5">
+            <span>Capacidades Heroicas</span>
+            <i class="fa-solid fa-paw text-red-400 text-[10px]"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-paw text-[9px] text-red-600 shrink-0"></i>
+              <input type="text" id="cap_heroica_1" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-paw text-[9px] text-red-600 shrink-0"></i>
+              <input type="text" id="cap_heroica_2" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-paw text-[9px] text-red-600 shrink-0"></i>
+              <input type="text" id="cap_heroica_3" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-paw text-[9px] text-red-600 shrink-0"></i>
+              <input type="text" id="cap_heroica_4" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-paw text-[9px] text-red-600 shrink-0"></i>
+              <input type="text" id="cap_heroica_5" class="w-full text-xs">
+            </div>
+          </div>
+        </div>
+
+        <!-- MANIOBRAS DE COMBATE -->
+        <div class="col-span-6">
+          <div class="section-title mb-1.5">
+            <span>Maniobras de Combate</span>
+            <i class="fa-solid fa-person-rifle text-red-400 text-[10px]"></i>
+          </div>
+          <div class="space-y-1">
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-[9px] text-slate-700 shrink-0"></i>
+              <input type="text" id="maniobra_1" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-[9px] text-slate-700 shrink-0"></i>
+              <input type="text" id="maniobra_2" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-[9px] text-slate-700 shrink-0"></i>
+              <input type="text" id="maniobra_3" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-[9px] text-slate-700 shrink-0"></i>
+              <input type="text" id="maniobra_4" class="w-full text-xs">
+            </div>
+            <div class="flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-[9px] text-slate-700 shrink-0"></i>
+              <input type="text" id="maniobra_5" class="w-full text-xs">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORIAL Y PSI / DESCRIPCIÓN -->
+      <div class="grid grid-cols-12 gap-3 mb-3">
+        <div class="col-span-4">
+          <div class="section-title mb-1">Historial</div>
+          <textarea id="historial" rows="4" placeholder="Orígenes y notas del personaje..."></textarea>
+        </div>
+        <div class="col-span-4">
+          <div class="section-title mb-1">PSI / Poderes</div>
+          <textarea id="psi" rows="4" placeholder="Habilidades o poderes mutantes/psíquicos..."></textarea>
+        </div>
+        <div class="col-span-4">
+          <div class="section-title mb-1">Descripción</div>
+          <textarea id="descripcion" rows="4" placeholder="Rasgos físicos, personalidad, cicatrices..."></textarea>
+        </div>
+      </div>
+
+      <!-- EQUIPO / CARGA (1 al 20) -->
+      <div>
+        <div class="section-title mb-1.5">
+          <span>Equipo / Carga</span>
+          <i class="fa-solid fa-box-archive text-red-400 text-xs"></i>
+        </div>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-1 bg-white p-2 border border-slate-300 rounded">
+          <!-- Columna Izquierda (1 - 10) -->
+          <div class="space-y-1">
+            <!-- Items 1 to 10 -->
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">1.</span><input type="checkbox" id="eq_chk_1"><input type="text" id="eq_1" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">2.</span><input type="checkbox" id="eq_chk_2"><input type="text" id="eq_2" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">3.</span><input type="checkbox" id="eq_chk_3"><input type="text" id="eq_3" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">4.</span><input type="checkbox" id="eq_chk_4"><input type="text" id="eq_4" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">5.</span><input type="checkbox" id="eq_chk_5"><input type="text" id="eq_5" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">6.</span><input type="checkbox" id="eq_chk_6"><input type="text" id="eq_6" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">7.</span><input type="checkbox" id="eq_chk_7"><input type="text" id="eq_7" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">8.</span><input type="checkbox" id="eq_chk_8"><input type="text" id="eq_8" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">9.</span><input type="checkbox" id="eq_chk_9"><input type="text" id="eq_9" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">10.</span><input type="checkbox" id="eq_chk_10"><input type="text" id="eq_10" class="w-full text-xs"></div>
+          </div>
+
+          <!-- Columna Derecha (11 - 20) -->
+          <div class="space-y-1">
+            <!-- Items 11 to 20 -->
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">11.</span><input type="checkbox" id="eq_chk_11"><input type="text" id="eq_11" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">12.</span><input type="checkbox" id="eq_chk_12"><input type="text" id="eq_12" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">13.</span><input type="checkbox" id="eq_chk_13"><input type="text" id="eq_13" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">14.</span><input type="checkbox" id="eq_chk_14"><input type="text" id="eq_14" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">15.</span><input type="checkbox" id="eq_chk_15"><input type="text" id="eq_15" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">16.</span><input type="checkbox" id="eq_chk_16"><input type="text" id="eq_16" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">17.</span><input type="checkbox" id="eq_chk_17"><input type="text" id="eq_17" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">18.</span><input type="checkbox" id="eq_chk_18"><input type="text" id="eq_18" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">19.</span><input type="checkbox" id="eq_chk_19"><input type="text" id="eq_19" class="w-full text-xs"></div>
+            <div class="flex items-center gap-1.5"><span class="w-4 text-right font-bold text-slate-500 text-[10px]">20.</span><input type="checkbox" id="eq_chk_20"><input type="text" id="eq_20" class="w-full text-xs"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="mt-4 pt-2 border-t border-slate-300 flex items-center justify-between text-[9px] text-slate-500">
+      <span>Jurassic Zero RPG — Ficha Oficial de Personaje</span>
+      <span>Página 1 de 1</span>
+    </footer>
+
+  </main>
+
+  <!-- LÓGICA JAVASCRIPT: Auto-guardado en LocalStorage y Datos de Ejemplo -->
+  <script>
+    const STORAGE_KEY = 'jurassic_zero_character_data';
+    let saveTimeout = null;
+
+    // Obtener todos los elementos editables
+    function getFormInputs() {
+      return document.querySelectorAll('input[type="text"], input[type="number"], input[type="checkbox"], textarea');
+    }
+
+    // Guardar estado en localStorage
+    function saveFormData() {
+      const data = {};
+      getFormInputs().forEach(input => {
+        if (input.type === 'checkbox') {
+          data[input.id] = input.checked;
+        } else {
+          data[input.id] = input.value;
+        }
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+      // Mostrar indicador de guardado brevemente
+      const indicator = document.getElementById('save-indicator');
+      indicator.classList.remove('opacity-0');
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        indicator.classList.add('opacity-0');
+      }, 1500);
+    }
+
+    // Cargar estado guardado
+    function loadFormData() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+
+      try {
+        const data = JSON.parse(saved);
+        getFormInputs().forEach(input => {
+          if (data[input.id] !== undefined) {
+            if (input.type === 'checkbox') {
+              input.checked = data[input.id];
+            } else {
+              input.value = data[input.id];
+            }
+          }
+        });
+      } catch (e) {
+        console.error('Error al cargar datos guardados:', e);
+      }
+    }
+
+    // Reiniciar ficha
+    function resetForm() {
+      if (confirm('¿Estás seguro de que deseas limpiar toda la ficha de personaje?')) {
+        getFormInputs().forEach(input => {
+          if (input.type === 'checkbox') {
+            input.checked = false;
+          } else {
+            input.value = '';
+          }
+        });
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    // Cargar datos de prueba/ejemplo
+    function loadDemoData() {
+      const demo = {
+        nombre: 'Darek "Veloce" Jax',
+        nivel: '3',
+        exp: '1450 / 2000',
+        profesion: 'Rastreador Apex',
+        afiliacion: 'Vanguardia Zero',
+        virtudes: 'Furia Táctica, Reflejos Felinos',
+        defectos: 'Impulsivo, Temor al Frío',
+        suerte_1: true,
+        suerte_2: true,
+        suerte_3: true,
+        suerte_val: '+3',
+        chk_destreza: true,
+        fuerza: '14 (+2)',
+        destreza: '18 (+4)',
+        inteligencia: '12 (+1)',
+        personalidad: '10 (+0)',
+        resistencia: '15 (+2)',
+        sentidos: '16 (+3)',
+        velocidad: '12m / turno',
+        defensa: '16',
+        vit_actual: '28',
+        vit_max: '32',
+        heridas: 'Ninguna',
+        pe_actual: '15',
+        pe_max: '20',
+        competencia: '+2',
+        cap_heroica_1: 'Esquiva Instantánea tras disparo',
+        cap_heroica_2: 'Rastreo Avanzado de Megafauna',
+        cap_heroica_3: 'Resistencia a Toxinas de Flora Temprana',
+        maniobra_1: 'Disparo a Quemarropa',
+        maniobra_2: 'Emboscada en la Maleza',
+        maniobra_3: 'Ataque Coordinado con Dron',
+        historial: 'Sobreviviente de la Caída del Sector 4. Entrenado en terreno salvaje para la captura de especímenes clase Alpha.',
+        psi: 'Enlace Vínculo Animal (Corto Alcance - 10m)',
+        descripcion: 'Cicatriz vertical en el ojo derecho. Traje de polímero reforzado con camuflaje selvático.',
+        eq_chk_1: true, eq_1: 'Rifle Neumático de Pulso',
+        eq_chk_2: true, eq_2: 'Cuchillo de Titanio Térmico',
+        eq_chk_3: true, eq_3: 'Kit Médico de Primeros Auxilios',
+        eq_chk_4: false, eq_4: 'Visor Nocturno Termográfico',
+        eq_chk_5: true, eq_5: 'Raciones Concentradas (5 días)'
+      };
+
+      Object.keys(demo).forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          if (input.type === 'checkbox') {
+            input.checked = demo[id];
+          } else {
+            input.value = demo[id];
+          }
+        }
+      });
+      saveFormData();
+    }
+
+    // Inicialización y Listeners
+    window.addEventListener('DOMContentLoaded', () => {
+      loadFormData();
+
+      // Escuchar cambios en todos los elementos para auto-guardar
+      getFormInputs().forEach(input => {
+        input.addEventListener('input', saveFormData);
+        input.addEventListener('change', saveFormData);
+      });
+    });
+  </script>
+
+</body>
+</html>
